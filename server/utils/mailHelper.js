@@ -1,6 +1,5 @@
 
 const nodemailer = require("nodemailer");
-
   async function mailHelper(options) {
   const transporter = nodemailer.createTransport({
     host:process.env.SMTP_HOST,
@@ -17,6 +16,13 @@ const nodemailer = require("nodemailer");
     to: options.email, // list of receivers
     subject: options.subject, // Subject line
     text: options.message, // plain text body
+    html:` <b>
+        <div>
+        <button >
+            <a href=${options.message}>click here to reset your password</a>
+        </button>
+    </div>
+    </b>`, 
   });
  
 }

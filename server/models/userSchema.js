@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
     name:{
+        
         type:String,
     },
     password:{
@@ -17,6 +18,10 @@ const userSchema = new mongoose.Schema({
     token:{
         type:String,
     },
+    role:{
+        type:String,
+        default: "user",
+    },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date,
     createdAt: {
@@ -25,6 +30,12 @@ const userSchema = new mongoose.Schema({
     },
 })
 
+userSchema.pre('save',async function(next) {
+    if(!this.isModified("password"))return next();
+
+    this.password = await bcrypt.hash(this.password,10)
+  });
+
 
 userSchema.method.validateUser = async function(email){
     await userSchema.findOne({email}) != {}?(true):(false)
@@ -32,8 +43,9 @@ userSchema.method.validateUser = async function(email){
 
 
 
-userSchema.methods.passwordCompare =async function(password){
-   return (await bcrypt.compare(password,this.password) === true?(true):(false))
+userSchema.methods.passwordCompare = async function(password){
+    return (await bcrypt.compare(password,this.password) === true?(true):(false))
+
 }
 
 userSchema.methods.tokenGenerat= function(){

@@ -2,20 +2,33 @@ require("dotenv").config();
 const express = require("express")
 const app = express();
 const DBconnection = require("./config/DBs")
-const routes  = require("./routes/routes")
 const cookieParser = require('cookie-parser')
 const cors = require("cors");
-// connecting to database
+
+// database Connection
+DBconnection();
+
+//import all routes here
+const user  = require("./routes/userRoutes")
+const product = require("./routes/productsRoutes")
+
+
+// router middleware
+app.use("/",user)
+app.use("/",product)
+
 
 
 //middleware
 app.use(cookieParser());
 
+//regular middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+//connecting frontend and backend
 app.use(cors());
-DBconnection();
-app.use("/",routes)
+
 
 
 module.exports = app;
